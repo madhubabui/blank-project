@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Project Detail</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        nav a { margin-right: 12px; }
+        section { margin-top: 24px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f5f5f5; text-align: left; }
+        input, button, select { padding: 8px; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/">Dashboard</a>
+    <a href="/partners">Partners</a>
+    <a href="/projects">Projects</a>
+</nav>
+
+<h1>Project <span th:text="${project.title}">Title</span></h1>
+<p><strong>ID:</strong> <span th:text="${project.id}">1</span></p>
+<p><strong>Description:</strong> <span th:text="${project.description}">Description</span></p>
+
+<section>
+    <h2>Linked Partners</h2>
+    <ul>
+        <li th:each="pid : ${project.partnerIds}">
+            <span th:text="${#lists.findFirst(partners, p -&gt; p.id == pid)?.name}">Partner Name</span>
+        </li>
+    </ul>
+    <h3>Link Partner</h3>
+    <form method="post" th:action="'/projects/' + ${project.id} + '/link-partner'">
+        <select name="partnerId" required>
+            <option th:each="p : ${partners}" th:value="${p.id}" th:text="${p.name}">Partner</option>
+        </select>
+        <button type="submit">Link</button>
+    </form>
+</section>
+
+<section>
+    <h2>Contracts</h2>
+    <table>
+        <thead><tr><th>ID</th><th>Terms</th><th>Value</th></tr></thead>
+        <tbody>
+            <tr th:each="c : ${project.contracts}">
+                <td th:text="${c.id}">1</td>
+                <td th:text="${c.terms}">Terms</td>
+                <td th:text="${c.value}">0.0</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3>Add Contract</h3>
+    <form method="post" th:action="'/projects/' + ${project.id} + '/contracts'">
+        <input type="text" name="terms" placeholder="Terms" required />
+        <input type="number" step="0.01" name="value" placeholder="Value" required />
+        <button type="submit">Add</button>
+    </form>
+</section>
+
+<section>
+    <h2>Payments</h2>
+    <table>
+        <thead><tr><th>ID</th><th>Amount</th><th>Note</th></tr></thead>
+        <tbody>
+            <tr th:each="pay : ${project.payments}">
+                <td th:text="${pay.id}">1</td>
+                <td th:text="${pay.amount}">0.0</td>
+                <td th:text="${pay.note}">Note</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3>Add Payment</h3>
+    <form method="post" th:action="'/projects/' + ${project.id} + '/payments'">
+        <input type="number" step="0.01" name="amount" placeholder="Amount" required />
+        <input type="text" name="note" placeholder="Note" />
+        <button type="submit">Add</button>
+    </form>
+</section>
+
+<section>
+    <h2>KPIs</h2>
+    <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Value</th></tr></thead>
+        <tbody>
+            <tr th:each="k : ${project.kpis}">
+                <td th:text="${k.id}">1</td>
+                <td th:text="${k.name}">KPI Name</td>
+                <td th:text="${k.value}">Value</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3>Add KPI</h3>
+    <form method="post" th:action="'/projects/' + ${project.id} + '/kpis'">
+        <input type="text" name="name" placeholder="KPI name" required />
+        <input type="text" name="value" placeholder="Value" required />
+        <button type="submit">Add</button>
+    </form>
+</section>
+
+</body>
+</html>

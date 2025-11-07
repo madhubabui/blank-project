@@ -3,7 +3,9 @@ package com.college.ppp;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Reader;
@@ -12,22 +14,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+@Service
 public class Store {
     private final Path dataPath = Path.of("ppp_data.json");
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private final Map&lt;Integer, Partner&gt; partners = new LinkedHashMap&lt;&gt;();
-    private final Map&lt;Integer, Project&gt; projects = new LinkedHashMap&lt;&gt;();
+    private final Map<Integer, Partner> partners = new LinkedHashMap<>();
+    private final Map<Integer, Project> projects = new LinkedHashMap<>();
     private int nextPartnerId = 1;
     private int nextProjectId = 1;
     private int nextContractId = 1;
     private int nextPaymentId = 1;
     private int nextKpiId = 1;
 
+    @PostConstruct
+    public void init() {
+        load();
+    }
+
     public void load() {
         if (!Files.exists(dataPath)) return;
         try (Reader reader = new FileReader(dataPath.toFile())) {
-            Type type = new TypeToken&lt;PersistedData&gt;() {}.getType();
+            Type type = new TypeToken<PersistedData>() {}.getType();
             PersistedData pd = gson.fromJson(reader, type);
             if (pd != null) {
                 partners.clear();
@@ -56,7 +64,7 @@ public class Store {
     }
 
     public void save() {
-        PersistedData pd = new PersistedData(new ArrayList&lt;&gt;(partners.values()), new ArrayList&lt;&gt;(projects.values()));
+        PersistedData pd = new PersistedData(new ArrayList<>(partners.values()), new ArrayList<>(projects.values()));
         try (FileWriter writer = new FileWriter(dataPath.toFile())) {
             gson.toJson(pd, writer);
         } catch (Exception e) {
@@ -67,21 +75,31 @@ public class Store {
     public Partner createPartner(String name, String email) {
         Partner p = new Partner(nextPartnerId++, name, email);
         partners.put(p.id(), p);
+        save();
         return p;
     }
 
-    public List&lt;Partner&gt; getPartners() {
-        return new ArrayList&lt;&gt;(partners.values());
+    public List<Partner> getPartners() {
+        return new ArrayList<>(partners.values());
+    }
+
+    public Partner getPartnerById(int id) {
+        return partners.get(id);
     }
 
     public Project createProject(String title, String description) {
-        Project p = new Project(nextProjectId++, title, description, new ArrayList&lt;&gt;(), new ArrayList&lt;&gt;(), new ArrayList&lt;&gt;(), new ArrayList&lt;&gt;());
+        Project p = new Project(nextProjectId++, title, description, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         projects.put(p.id(), p);
+        save();
         return p;
     }
 
-    public List&lt;Project&gt; getProjects() {
-        return new ArrayList&lt;&gt;(projects.values());
+    public List<Project> getProjects() {
+        return new ArrayList<>(projects.values());
+    }
+
+    public Project getProjectById(int id) {
+        return projects.get(id);
     }
 
     public boolean addPartnerToProject(int partnerId, int projectId) {
@@ -91,6 +109,7 @@ public class Store {
         if (!project.partnerIds().contains(partnerId)) {
             project.partnerIds().add(partnerId);
         }
+        save();
         return true;
     }
 
@@ -99,6 +118,7 @@ public class Store {
         if (project == null) return null;
         Contract c = new Contract(nextContractId++, terms, value);
         project.contracts().add(c);
+        save();
         return c;
     }
 
@@ -107,6 +127,7 @@ public class Store {
         if (project == null) return null;
         Payment p = new Payment(nextPaymentId++, amount, note, new Date().getTime());
         project.payments().add(p);
+        save();
         return p;
     }
 
@@ -115,14 +136,15 @@ public class Store {
         if (project == null) return null;
         KPI k = new KPI(nextKpiId++, name, value, new Date().getTime());
         project.kpis().add(k);
+        save();
         return k;
     }
 
     static class PersistedData {
-        List&lt;Partner&gt; partners;
-        List&lt;Project&gt; projects;
+        List<Partner> partners;
+        List<Project> projects;
 
-        PersistedData(List&lt;Partner&gt; partners, List&lt;Project&gt; projects) {
+        PersistedData(List<Partner> partners, List<Project> projects) {
             this.partners = partners;
             this.projects = projects;
         }

@@ -1,6 +1,6 @@
-# College PPP Operations - Java Application
+# College PPP Operations - Java Web Application
 
-A simple console-based Java application to maintain PPP (Public-Private Partnership) operations of the college: partners, projects, contracts, payments, and KPI tracking.
+A Spring Boot web application to maintain PPP (Public-Private Partnership) operations of the college: partners, projects, contracts, payments, and KPI tracking. Data is persisted as JSON on disk for simplicity.
 
 ## Requirements
 - Java 17+
@@ -13,19 +13,26 @@ A simple console-based Java application to maintain PPP (Public-Private Partners
    ```
 2. Run:
    ```
+   mvn spring-boot:run
+   ```
+   or
+   ```
    java -jar target/ppp-ops-0.1.0.jar
    ```
+
+3. Open the app:
+   - http://localhost:8080
 
 Data is persisted to `ppp_data.json` in the project root.
 
 ## Features
-- Add and list partners
-- Add and list projects
-- Link partners to projects
-- Create contracts with terms and value
-- Record payments against projects
-- Record KPIs for monitoring outcomes
-- Save/load data (JSON)
+- Dashboard with counts
+- Partners: list and add
+- Projects: list and add
+- Project detail: link partners, add contracts, payments, and KPIs
+- JSON persistence (no external DB needed)
 
-## Notes
-This is a console MVP. If you want a desktop GUI or web interface, I can extend it with JavaFX (desktop) or Spring Boot (web/API) based on your preferences.
+## Next Extensions
+- Authentication and roles (Admin/Coordinator/Viewer)
+- Reporting: financial summaries, KPI charts, CSV/Excel exports
+- Switch to a database (PostgreSQL/MySQL) if needed

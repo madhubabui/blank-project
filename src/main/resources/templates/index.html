@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PPP Operations - Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; }
+        nav a { margin-right: 12px; }
+        .card { border: 1px solid #ddd; padding: 16px; border-radius: 6px; display: inline-block; margin-right: 16px; }
+        h1 { margin-top: 0; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/">Dashboard</a>
+    <a href="/partners">Partners</a>
+    <a href="/projects">Projects</a>
+</nav>
+<h1>Dashboard</h1>
+<div class="card">
+    <h2>Partners</h2>
+    <p>Total: <span th:text="${partnerCount}">0</span></p>
+</div>
+<div class="card">
+    <h2>Projects</h2>
+    <p>Total: <span th:text="${projectCount}">0</span></p>
+</div>
+</body>
+</html>
