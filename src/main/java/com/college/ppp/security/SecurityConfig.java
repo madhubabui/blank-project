@@ -1,27 +1,33 @@
 package com.college.ppp.security;
 
+import com.college.ppp.user.User;
+import com.college.ppp.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private final UserRepository userRepository;
+
+    public SecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/css/**").permitAll()
-                .requestMatchers("/partners", "/projects", "/projects/*").authenticated()
+                .requestMatchers("/", "/login", "/register", "/css/**").permitAll()
+                .requestMatchers("/partners", "/projects", "/projects/*", "/reports/**").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -35,17 +41,19 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService users() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("admin").password("admin").roles("ADMIN").build());
-        manager.createUser(User.withUsername("coord").password("coord").roles("COORDINATOR").build());
-        manager.createUser(User.withUsername("viewer").password("viewer").roles("VIEWER").build());
-        return manager;
+        return username -> {
+            User u = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(u.getUsername())
+                    .password(u.getPasswordHash())
+                    .roles(u.getRole().name())
+                    .build();
+        };
     }
 
     @Bean
-    @SuppressWarnings("deprecation")
     public PasswordEncoder passwordEncoder() {
-        // For demo simplicity; replace with BCryptPasswordEncoder in production.
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 }
