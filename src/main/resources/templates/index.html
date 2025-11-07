@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>PPP Operations - Dashboard</title>
@@ -8,6 +8,7 @@
         nav a { margin-right: 12px; }
         .card { border: 1px solid #ddd; padding: 16px; border-radius: 6px; display: inline-block; margin-right: 16px; }
         h1 { margin-top: 0; }
+        .user { float: right; }
     </style>
 </head>
 <body>
@@ -15,6 +16,7 @@
     <a href="/">Dashboard</a>
     <a href="/partners">Partners</a>
     <a href="/projects">Projects</a>
+    <span class="user">Logged in as <strong th:text="${username}">Guest</strong> | <a href="/logout">Logout</a></span>
 </nav>
 <h1>Dashboard</h1>
 <div class="card">

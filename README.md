@@ -32,7 +32,21 @@ Data is persisted to `ppp_data.json` in the project root.
 - Project detail: link partners, add contracts, payments, and KPIs
 - JSON persistence (no external DB needed)
 
+## Authentication
+- Login required for app pages
+- Roles:
+  - ADMIN, COORDINATOR: can add partners/projects, link partners, and add contracts, payments, KPIs
+  - VIEWER: read-only access
+- Demo users:
+  - admin/admin
+  - coord/coord
+  - viewer/viewer
+
+## Reporting
+- Export payments per project as CSV via link on project detail page:
+  - /projects/{id}/payments.csv
+
 ## Next Extensions
-- Authentication and roles (Admin/Coordinator/Viewer)
-- Reporting: financial summaries, KPI charts, CSV/Excel exports
+- Replace demo users with persistent user accounts and hashed passwords
+- Financial summaries, KPI charts, Excel exports
 - Switch to a database (PostgreSQL/MySQL) if needed
